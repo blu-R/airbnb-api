@@ -56,6 +56,7 @@ const getUserById = async id => {
             exclude: ["password"],
         },
     });
+    //console.log(data);
     return data;
     //? select * from users where id = ${id};
 };
@@ -65,25 +66,26 @@ const createUser = async data => {
         id: uuid.v4(),
         password: hashPassword(data.password),
         role: "normal",
-        is_active: true,
+        status: "active",
         verified: false,
-        first_name: data.first_name,
-        last_name: data.last_name,
+        firstName: data.firstName,
+        lastName: data.lastName,
         email: data.email,
-        birthday_date: data.birthday_date,
+        birthdayDate: data.birthdayDate,
         country: data.country,
         phone: data.phone ? data.phone : null,
-        profile_image: data.profile_image ? data.profile_image : null,
+        profileImage: data.profileImage ? data.profileImage : null,
     });
     return newUser;
 };
 
-const editUser = async (userId, data, userRol) => {
-    if (userRol === "admin") {
-        const { id, password, verified, ...newData } = data;
+const editUser = async (userId, data, userRole) => {
+    const { id, password, verified, role, ...restOfProperties } = data;
+    if (userRole === "admin") {
         const response = await Users.update(
             {
-                ...newData,
+                ...restOfProperties,
+                role,
             },
             {
                 where: {
@@ -93,11 +95,9 @@ const editUser = async (userId, data, userRol) => {
         );
         return response;
     } else {
-        const { id, password, verified, role, ...newData } = data;
         const response = await Users.update(
-            {
-                ...newData,
-            },
+            restOfProperties,
+
             {
                 where: {
                     id: userId,
@@ -122,21 +122,25 @@ const getUserByEmail = async email => {
         where: {
             email,
         },
+        exclude: ["createdAt", "updatedAt", "role"],
     });
-    //console.log(data[0].dataValues);
-    return data[0] ? data[0].dataValues : false;
-    //? select * from users where email = ${email};
+
+    return data;
+
+    //? select * from userswhere email = ${email};
 };
 
-const editProfileImg = (userId, imgUrl) => {
-    const index = usersDB.findIndex(user => user.id === userId);
-    if (index !== -1) {
-        usersDB[index].profile_image = imgUrl;
-        return usersDB[index];
-    }
-    return false;
+const editProfileImg = async (userId, imgUrl) => {
+    const data = await Users.update(
+        {
+            profileImage: imgUrl,
+        },
+        {
+            where: { id: userId },
+        }
+    );
+    return data;
 };
-// console.log(createUser({ password: "1234" }));
 
 module.exports = {
     getAllUsers,

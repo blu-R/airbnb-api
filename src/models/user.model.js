@@ -6,17 +6,25 @@ const Users = db.define("users", {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    first_name: {
+    firstName: {
         allowNull: false,
         type: DataTypes.STRING,
+        field: "first_name",
+        validate: {
+            len: [2, 35],
+        },
     },
-    last_name: {
+    lastName: {
         allowNull: false,
         type: DataTypes.STRING,
+        field: "last_name",
+        validate: {
+            len: [2, 45],
+        },
     },
     email: {
         allowNull: false,
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING,
         unique: true,
         validate: {
             isEmail: true,
@@ -29,35 +37,53 @@ const Users = db.define("users", {
     phone: {
         allowNull: false,
         type: DataTypes.STRING,
+        validate: {
+            len: [10, 15],
+        },
     },
-    birthday_date: {
+    birthdayDate: {
         allowNull: false,
         type: DataTypes.DATEONLY,
+        field: "birthday_date",
     },
     role: {
         allowNull: false,
         type: DataTypes.STRING,
         defaultValue: "normal",
     },
-    profile_image: {
+    profileImage: {
         type: DataTypes.STRING,
-        validate: {
+        field: "profile_image",
+        /*  validate: {
             isUrl: true,
-        },
+        }, */
     },
     country: {
         allowNull: false,
         type: DataTypes.STRING,
+        validate: {
+            len: [2, 2],
+        },
     },
-    is_active: {
+    status: {
         allowNull: false,
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        type: DataTypes.STRING,
+        defaultValue: "active", // active, non-active, deleted, suspended
     },
     verified: {
         allowNull: false,
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+    },
+    createdAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        field: "created_at",
+    },
+    updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
+        field: "updated_at",
     },
 });
 

@@ -15,10 +15,17 @@ const getById = (req, res) => {
     userControllers
         .getUserById(id)
         .then(response => {
-            res.status(200).json(response);
+            if (!response) {
+                return res.status(400).json({
+                    message: `Invalid ID`,
+                });
+            }
+            return res.status(200).json(response);
         })
         .catch(err => {
-            res.status(404).json({ message: `User with ID ${id} not found` });
+            return res.status(404).json({
+                message: `Invalid ID`,
+            });
         });
 };
 
@@ -27,28 +34,27 @@ const register = (req, res) => {
     if (!Object.keys(data).length) {
         return res.status(400).json({ message: "Missing data" });
     } else if (
-        !data.first_name ||
-        !data.last_name ||
+        !data.firstName ||
+        !data.lastName ||
         !data.email ||
         !data.phone ||
         !data.password ||
-        !data.birthday_date ||
+        !data.birthdayDate ||
         !data.country
     ) {
         return res.status(400).json({
             message: "All fields must be completed",
             fields: {
-                first_name: "string",
-                last_name: "string",
+                firstName: "string",
+                lastName: "string",
                 email: "example@example.com",
                 phone: "string",
                 password: "string",
-                birthday_date: "DD/MM/YY",
+                birthdayDate: "YYYY-MM-DD",
                 country: "string",
             },
         });
     } else {
-        //! sanitizar data
         userControllers
             .createUser(data)
             .then(response => {
@@ -68,53 +74,66 @@ const edit = (req, res) => {
     if (!Object.keys(user).length) {
         return res.status(400).json({ message: "Missing data" });
     } else if (
-        !user.first_name ||
-        !user.last_name ||
+        !user.firstName ||
+        !user.lastName ||
         !user.email ||
-        !user.phone ||
         !user.role ||
-        !user.profile_image ||
-        !user.birthday_date ||
+        !user.birthdayDate ||
         !user.country ||
-        !user.is_active
+        !user.status
     ) {
         return res.status(400).json({
             message: "All fields must be completed",
             fields: {
-                first_name: "string",
-                last_name: "string",
+                firstName: "string",
+                lastName: "string",
                 email: "example@example.com",
-                phone: "+51646461616",
                 role: "normal",
-                profile_image: "exampli.com/img/example.png",
-                birthday_date: "DD/MM/YYYY",
+                birthdayDate: "YYYY-MM-DD",
                 country: "string",
-                is_active: true,
+                status: "string",
             },
         });
     } else {
-        const data = userControllers.editUser(id, user, req.user.rol);
-        return res.status(200).json({
-            message: `User data edited succesfully`,
-            user: data,
-        });
+        userControllers
+            .editUser(id, user, req.user.role)
+            .then(response => {
+                if (!response[0]) {
+                    return res.status(404).json({ message: "Invalid ID" });
+                }
+                return res.status(200).json({
+                    message: `User data edited succesfully`,
+                    user: response,
+                });
+            })
+            .catch(err => {
+                return res.status(400).json({
+                    message: "Invalid ID",
+                    err,
+                });
+            });
     }
 };
 
 const remove = (req, res) => {
     const id = req.params.id;
-    userControllers.deleteUser(id).then(response => {
-        if (response) {
-            res.status(204).json(); //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
-        } else {
-            res.status(400).json({ message: "Invalid ID" });
-        }
-    });
+    userControllers
+        .deleteUser(id)
+        .then(response => {
+            if (response) {
+                return res.status(204).json(); //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
+            } else {
+                return res.status(404).json({ message: "Invalid ID" });
+            }
+        })
+        .catch(err => {
+            return res.status(400).json({ message: "Invalid ID", err });
+        });
 };
 
 const getMyUser = (req, res) => {
     const id = req.user.id;
-    console.log(id);
+    //console.log(id);
     userControllers
         .getUserById(id)
         .then(response => {
@@ -132,43 +151,61 @@ const editMyUser = (req, res) => {
     if (!Object.keys(user).length) {
         return res.status(400).json({ message: "Missing data" });
     } else if (
-        !user.first_name ||
-        !user.last_name ||
+        !user.firstName ||
+        !user.lastName ||
         !user.email ||
         !user.phone ||
-        !user.profile_image ||
-        !user.birthday_date ||
+        !user.birthdayDate ||
         !user.country ||
-        !user.is_active
+        !user.status
     ) {
         return res.status(400).json({
             message: "All fields must be completed",
             fields: {
-                first_name: "string",
-                last_name: "string",
+                firstName: "string",
+                lastName: "string",
                 email: "example@example.com",
                 phone: "+51646461616",
-                profile_image: "exampli.com/img/example.png",
-                birthday_date: "DD/MM/YYYY",
+                birthdayDate: "YYYY-MM-DD",
                 country: "string",
-                is_active: true,
+                status: "string",
             },
         });
     } else {
-        const data = userControllers.editUser(id, user);
-        return res.status(200).json({
-            message: `User data edited succesfully`,
-            user: data,
-        });
+        userControllers
+            .editUser(id, user, req.user.role)
+            .then(response => {
+                if (!response[0]) {
+                    return res.status(404).json({ message: "Invalid ID" });
+                }
+                return res.status(200).json({
+                    message: `User data edited succesfully`,
+                    user: response,
+                });
+            })
+            .catch(err => {
+                return res.status(400).json({
+                    message: "Invalid ID",
+                    err,
+                });
+            });
     }
 };
 
 const removeMyUser = (req, res) => {
     const id = req.user.id;
-    const data = userControllers.deleteUser(id);
-    return data
-        ? res.status(204).json() //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
-        : res.status(400).json({ message: "Invalid Id" });
+    userControllers
+        .deleteUser(id)
+        .then(response => {
+            if (response) {
+                return res.status(204).json(); //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
+            } else {
+                return res.status(404).json({ message: "Invalid ID" });
+            }
+        })
+        .catch(err => {
+            return res.status(400).json({ message: "Invalid ID", err });
+        });
 };
 
 const postProfileImg = (req, res) => {
@@ -176,11 +213,15 @@ const postProfileImg = (req, res) => {
     console.log(req.file);
     const imgPath =
         req.hostname + ":" + port + "/api/v1/uploads/" + req.file.filename;
-    const data = userControllers.editProfileImg(id, imgPath);
-    if (data) {
-        return res.status(200).json(data);
-    }
-    return res.status(400).json({ message: "Wrong Id" });
+    userControllers
+        .editProfileImg(id, imgPath)
+        .then(response => {
+            if (response) {
+                return res.status(200).json(response);
+            }
+            return res.status(404).json({ message: "Invalid ID" });
+        })
+        .catch(err => res.status(400).json({ err }));
 };
 
 module.exports = {
