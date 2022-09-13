@@ -39,8 +39,7 @@ const register = (req, res) => {
         !data.email ||
         !data.phone ||
         !data.password ||
-        !data.birthdayDate ||
-        !data.country
+        !data.birthdayDate
     ) {
         return res.status(400).json({
             message: "All fields must be completed",
@@ -224,6 +223,21 @@ const postProfileImg = (req, res) => {
         .catch(err => res.status(400).json({ err }));
 };
 
+const getUserRole = (req, res) => {
+    const id = req.params.id;
+    userControllers
+        .getUserWithRole(id)
+        .then(response => {
+            if (!response) {
+                return res
+                    .status(404)
+                    .json({ message: "Invalid ID. User doesn't exist" });
+            }
+            res.status(200).json(response);
+        })
+        .catch(err => res.status(400).json({ message: "Error", err }));
+};
+
 module.exports = {
     getAll,
     getById,
@@ -234,4 +248,5 @@ module.exports = {
     editMyUser,
     removeMyUser,
     postProfileImg,
+    getUserRole,
 };

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const passport = require("passport");
-const { roleAdminMiddleware } = require("../middleware/adminRole");
+const { roleAdminMiddleware } = require("../middleware/role.middleware");
 const { upload } = require("../utils/multer");
 require("../middleware/auth.middleware")(passport);
 
@@ -47,5 +47,7 @@ router
         roleAdminMiddleware,
         userServices.remove
     );
+
+router.route("/:id/role").get(userServices.getUserRole);
 
 exports.router = router;

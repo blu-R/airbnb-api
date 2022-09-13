@@ -8,7 +8,7 @@ const Users = db.define("users", {
     },
     firstName: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(35),
         field: "first_name",
         validate: {
             len: [2, 35],
@@ -16,11 +16,15 @@ const Users = db.define("users", {
     },
     lastName: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(45),
         field: "last_name",
         validate: {
             len: [2, 45],
         },
+    },
+    gender: {
+        allowNull: false,
+        type: DataTypes.STRING(20),
     },
     email: {
         allowNull: false,
@@ -46,23 +50,22 @@ const Users = db.define("users", {
         type: DataTypes.DATEONLY,
         field: "birthday_date",
     },
-    role: {
-        allowNull: false,
+    dni: {
         type: DataTypes.STRING,
-        defaultValue: "normal",
+    },
+    roleID: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        field: "role_id",
+    },
+    address: {
+        type: DataTypes.STRING,
     },
     profileImage: {
         type: DataTypes.STRING,
         field: "profile_image",
-        /*  validate: {
-            isUrl: true,
-        }, */
-    },
-    country: {
-        allowNull: false,
-        type: DataTypes.STRING,
         validate: {
-            len: [2, 2],
+            isUrl: true,
         },
     },
     status: {

@@ -20,7 +20,7 @@ const login = async (req, res) => {
             {
                 id: data.id,
                 email: data.email,
-                role: data.role,
+                role: data.roleID,
             },
             jwt_secret
         );

@@ -1,27 +1,27 @@
 const { db, DataTypes } = require("../utils/database");
 
-const Posts = db.define("posts", {
+const AccommodationImages = db.define("accommodation_images", {
     id: {
         primaryKey: true,
         type: DataTypes.UUID,
         allowNull: false,
     },
-    title: {
-        type: DataTypes.STRING,
+    name: {
         allowNull: false,
-    },
-    content: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
-    user_id: {
+    accommodationId: {
+        allowNull: false,
         type: DataTypes.UUID,
-        allowNull: false,
+        field: "accommodation_id",
     },
-    status: {
+    url: {
+        allowNull: false,
         type: DataTypes.STRING,
-        defaultValue: "active",
+        validate: {
+            isUrl: true,
+        },
     },
 });
 
-module.exports = Posts;
+module.exports = AccommodationImages;

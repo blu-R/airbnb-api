@@ -12,19 +12,37 @@ const { port } = require("./config");
 const userRouter = require("./users/users.routes").router;
 const authRouter = require("./auth/auth.routes").router;
 
+const initModels = require("./models/initModels");
+
 const { db } = require("./utils/database"); //* Sequelize
 
 //* Configuraciones iniciales
 const app = express();
+
+initModels();
+const defaultData = require("./utils/defaultData");
 
 //* Authenticate database credentials
 db.authenticate()
     .then(() => console.log("Database Authenticated"))
     .catch(err => console.log(err));
 
-db.sync()
-    .then(() => console.log("Database synced."))
-    .catch(err => console.log(err));
+if (process.env.NODE_ENV === "production") {
+    db.sync()
+        .then(() => {
+            console.log("Database synced.");
+            defaultData();
+        })
+        .catch(err => console.log(err));
+} else {
+    // db.sync({ force: true })
+    db.sync()
+        .then(() => {
+            console.log("Database synced.");
+            // defaultData();
+        })
+        .catch(err => console.log(err));
+}
 
 app.use(express.json()); //? Esta configuración es para habilitar el req.body
 
