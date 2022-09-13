@@ -115,17 +115,17 @@ const editProfileImg = async (userId, imgUrl) => {
 const getUserWithRole = async userID => {
     const data = await Users.findAll({
         where: { id: userID },
+        include: {
+            model: Roles,
+            as: "role",
+            attributes: {
+                exclude: ["id", "createdAt", "updatedAt"],
+            },
+        },
+
         attributes: {
             exclude: ["password", "createdAt", "updatedAt", "roleID"],
         },
-        include: [
-            {
-                model: Roles,
-                attributes: {
-                    exclude: ["id", "createdAt", "updatedAt"],
-                },
-            },
-        ],
     });
     return data;
 };

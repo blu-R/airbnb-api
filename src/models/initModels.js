@@ -1,36 +1,36 @@
-const Users = require("./users.model");
-const User_images = require("./user_images.model");
-const Roles = require("./roles.model");
-const Reservations = require("./reservations.model");
-const Accommodations = require("./accommodations.model");
-const AccommodationImages = require("./accommodation_images.model");
-const Places = require("./places.model");
+const User = require("./users.model");
+const User_image = require("./user_images.model");
+const Role = require("./roles.model");
+const Reservation = require("./reservations.model");
+const Accommodation = require("./accommodations.model");
+const AccommodationImage = require("./accommodation_images.model");
+const Place = require("./places.model");
 
 const initModels = () => {
     //? Users <- Roles
-    Roles.hasMany(Users, { foreignKey: "roleID" });
+    Role.hasMany(User, { foreignKey: "roleID" });
     // Roles.hasMany(Users);
-    Users.belongsTo(Roles, { foreignKey: "roleID" });
+    User.belongsTo(Role, { foreignKey: "roleID" });
 
     //? Users -> Users_images
-    Users.hasMany(User_images);
-    User_images.belongsTo(Users);
+    User.hasMany(User_image);
+    User_image.belongsTo(User);
 
     //? Users <-> Accommodations
-    Users.belongsToMany(Accommodations, { through: Reservations });
-    Accommodations.belongsToMany(Users, { through: Reservations });
+    User.belongsToMany(Accommodation, { through: Reservation });
+    Accommodation.belongsToMany(User, { through: Reservation });
 
     //? Accommodations ->  Accommodation_images
-    Accommodations.hasMany(AccommodationImages);
-    AccommodationImages.belongsTo(Accommodations);
+    Accommodation.hasMany(AccommodationImage);
+    AccommodationImage.belongsTo(Accommodation);
 
     //? Accommodations  <-  Places
-    Accommodations.belongsTo(Places);
-    Places.hasMany(Accommodations);
+    Accommodation.belongsTo(Place);
+    Place.hasMany(Accommodation);
 
     //? User -> Acommodations (Host)
-    Users.hasMany(Accommodations);
-    Accommodations.belongsTo(Users);
+    User.hasMany(Accommodation);
+    Accommodation.belongsTo(User);
 
     //?belongsTo
     //?belongsToMany

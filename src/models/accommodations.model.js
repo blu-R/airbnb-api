@@ -13,7 +13,7 @@ const Accommodations = db.define("accommodations", {
     beds: { allowNull: false, type: DataTypes.INTEGER },
     bathrooms: { allowNull: false, type: DataTypes.DECIMAL },
     price: { allowNull: false, type: DataTypes.FLOAT },
-    hostId: { allowNull: false, type: DataTypes.UUID, field: "user_id" },
+    userId: { allowNull: false, type: DataTypes.UUID, field: "host_id" },
     score: { allowNull: false, type: DataTypes.FLOAT },
     placeId: { allowNull: false, type: DataTypes.UUID, field: "place_id" },
     commision: { allowNull: false, type: DataTypes.FLOAT },
