@@ -1,6 +1,7 @@
 //* Dependencias
 const express = require("express");
 const passport = require("passport");
+const swaggerUi = require("swagger-ui-express");
 const path = require("path");
 
 require("./middleware/auth.middleware")(passport);
@@ -11,8 +12,12 @@ const { port } = require("./config");
 //* Archivos de rutas
 const userRouter = require("./users/users.routes").router;
 const authRouter = require("./auth/auth.routes").router;
+const accommodationRouter =
+    require("./accommodations/accomodations.routes").router;
 
 const initModels = require("./models/initModels");
+const defaultData = require("./utils/defaultData");
+const swaggerDoc = require("./swagger.json");
 
 const { db } = require("./utils/database"); //* Sequelize
 
@@ -20,7 +25,6 @@ const { db } = require("./utils/database"); //* Sequelize
 const app = express();
 
 initModels();
-const defaultData = require("./utils/defaultData");
 
 //* Authenticate database credentials
 db.authenticate()
@@ -35,11 +39,11 @@ if (process.env.NODE_ENV === "production") {
         })
         .catch(err => console.log(err));
 } else {
-    db.sync({ force: true })
-        // db.sync()
+    // db.sync({ force: true })
+    db.sync()
         .then(() => {
             console.log("Database synced.");
-            defaultData();
+            // defaultData();
         })
         .catch(err => console.log(err));
 }
@@ -48,6 +52,9 @@ app.use(express.json()); //? Esta configuración es para habilitar el req.body
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/accommodations", accommodationRouter);
+app.use("/v1/doc", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
 app.use("/api/v1/uploads/:imgName", (req, res) => {
     const imgName = req.params.imgName;
     res.status(200).sendFile(path.resolve("uploads/") + "/" + imgName);

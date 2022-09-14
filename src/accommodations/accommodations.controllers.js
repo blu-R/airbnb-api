@@ -1,17 +1,23 @@
 const Accommodations = require("../models/accommodations.model");
 
-const Places = require("../models/places.model");
-const Users = require("../models/users.model");
+const Place = require("../models/places.model");
+const User = require("../models/users.model");
 
 const getAllAccommodations = async () => {
     const data = await Accommodations.findAll({
         include: [
             {
-                model: Places,
+                model: Place,
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
             },
             {
-                model: Users,
+                model: User,
                 as: "user",
+                attributes: {
+                    exclude: ["createdAt", "updatedAt"],
+                },
             },
         ],
         // attributes: {
@@ -40,13 +46,13 @@ const getAccommodationById = async id => {
         },
         include: [
             {
-                model: Places,
+                model: Place,
                 attributes: {
                     exclude: ["createdAt", "updatedAt"],
                 },
             },
             {
-                model: Users,
+                model: User,
                 as: "user",
                 attributes: {
                     exclude: ["createdAt", "updatedAt"],

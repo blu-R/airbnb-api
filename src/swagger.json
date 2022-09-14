@@ -1,0 +1,264 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API Rest Clon de Airbnb",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/users": {
+            "get": {
+                "summary": "Obtener todos los usuarios",
+                "description": " ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente todos los usuarios"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "summary": "Obtener un usuario por su ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": " ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente el usuario"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Editar un usuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información actualizada del usuario",
+                        "required": true,
+                        "type": "object"
+                    },
+                    {
+                        "name": "rol",
+                        "in": "jwt",
+                        "description": "ID del rol del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin' ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitosamente el usuario"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Eliminar un usuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin'",
+                "tags": ["Users"],
+                "responses": {
+                    "204": {
+                        "description": "Eliminamos exitosamente el usuario"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}/role": {
+            "get": {
+                "summary": "Obtener el rol de un usuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": " ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente el usuario y su rol"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me": {
+            "get": {
+                "summary": "Obtener usuario loggeado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario loggeado",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente el usuario"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Editar usuario loggeado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información actualizada del usuario",
+                        "required": true,
+                        "type": "object"
+                    },
+                    {
+                        "name": "rol",
+                        "in": "jwt",
+                        "description": "ID del rol del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario loggeado",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitosamente el usuario"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Eliminar un usuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario logeado",
+                "tags": ["Users"],
+                "responses": {
+                    "204": {
+                        "description": " Elimina exitosamente su usuario"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me/profile-img": {
+            "post": {
+                "summary": "Subir imágen de perfil",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Archivo a subir",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario loggeado",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitósamente la imágen de perfil del usuario"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            }
+        }
+    }
+}

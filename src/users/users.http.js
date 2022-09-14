@@ -16,15 +16,16 @@ const getById = (req, res) => {
         .getUserById(id)
         .then(response => {
             if (!response) {
-                return res.status(400).json({
-                    message: `Invalid ID`,
+                return res.status(404).json({
+                    message: `Invalid ID. User not found`,
                 });
             }
             return res.status(200).json(response);
         })
         .catch(err => {
-            return res.status(404).json({
-                message: `Invalid ID`,
+            return res.status(400).json({
+                message: "error",
+                err,
             });
         });
 };
@@ -98,7 +99,9 @@ const edit = (req, res) => {
             .editUser(id, user, req.user.role)
             .then(response => {
                 if (!response[0]) {
-                    return res.status(404).json({ message: "Invalid ID" });
+                    return res
+                        .status(404)
+                        .json({ message: "Invalid ID. User not found" });
                 }
                 return res.status(200).json({
                     message: `User data edited succesfully`,
@@ -107,7 +110,7 @@ const edit = (req, res) => {
             })
             .catch(err => {
                 return res.status(400).json({
-                    message: "Invalid ID",
+                    message: "error",
                     err,
                 });
             });
@@ -122,7 +125,9 @@ const remove = (req, res) => {
             if (response) {
                 return res.status(204).json(); //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
             } else {
-                return res.status(404).json({ message: "Invalid ID" });
+                return res
+                    .status(404)
+                    .json({ message: "Invalid ID. User not found" });
             }
         })
         .catch(err => {
@@ -139,7 +144,7 @@ const getMyUser = (req, res) => {
             res.status(200).json(response);
         })
         .catch(err => {
-            res.status(404).json({ message: `User with ID ${id} not found` });
+            res.status(400).json({ message: "error", err });
         });
 };
 
@@ -175,7 +180,9 @@ const editMyUser = (req, res) => {
             .editUser(id, user, req.user.role)
             .then(response => {
                 if (!response[0]) {
-                    return res.status(404).json({ message: "Invalid ID" });
+                    return res
+                        .status(404)
+                        .json({ message: "Invalid ID. User not found" });
                 }
                 return res.status(200).json({
                     message: `User data edited succesfully`,
@@ -184,7 +191,7 @@ const editMyUser = (req, res) => {
             })
             .catch(err => {
                 return res.status(400).json({
-                    message: "Invalid ID",
+                    message: "error",
                     err,
                 });
             });
@@ -199,11 +206,13 @@ const removeMyUser = (req, res) => {
             if (response) {
                 return res.status(204).json(); //? 204 no permite retornar algo, el json nos permite indicar que alli termina la respuesta.
             } else {
-                return res.status(404).json({ message: "Invalid ID" });
+                return res
+                    .status(404)
+                    .json({ message: "Invalid ID. User not found" });
             }
         })
         .catch(err => {
-            return res.status(400).json({ message: "Invalid ID", err });
+            return res.status(400).json({ message: "error", err });
         });
 };
 
@@ -218,9 +227,11 @@ const postProfileImg = (req, res) => {
             if (response) {
                 return res.status(200).json(response);
             }
-            return res.status(404).json({ message: "Invalid ID" });
+            return res
+                .status(404)
+                .json({ message: "Invalid ID. User not found" });
         })
-        .catch(err => res.status(400).json({ err }));
+        .catch(err => res.status(400).json({ message: "error", err }));
 };
 
 const getUserRole = (req, res) => {
@@ -231,9 +242,9 @@ const getUserRole = (req, res) => {
             if (!response) {
                 return res
                     .status(404)
-                    .json({ message: "Invalid ID. User doesn't exist" });
+                    .json({ message: "Invalid ID. User not found" });
             }
-            res.status(200).json(response);
+            return res.status(200).json(response);
         })
         .catch(err => res.status(400).json({ message: "Error", err }));
 };

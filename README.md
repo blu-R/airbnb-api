@@ -83,11 +83,11 @@
 /api/v1/accommodations
 
 "/"
--GET
+[✔]-GET
 -POST
 
 "/:id"
--GET
+[✔] -GET
 -PUT
 -PATCH
 -DELETE
