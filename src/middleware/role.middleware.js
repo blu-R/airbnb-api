@@ -62,7 +62,33 @@ const roleHostMiddleware = (req, res, next) => {
         );
 };
 
+const roleNotGuestMiddleware = (req, res, next) => {
+    Role.findOne({
+        where: {
+            name: "guest",
+        },
+    })
+        .then(response => {
+            const role = req.user.role;
+
+            if (role !== response.id) {
+                next();
+            } else {
+                res.status(401).json({
+                    status: "error",
+                    message: "User not authorized to make this request",
+                });
+            }
+        })
+        .catch(() =>
+            res.status(401).json({
+                status: "error",
+                message: "User not authorized to make this request",
+            })
+        );
+};
 module.exports = {
     roleAdminMiddleware,
     roleHostMiddleware,
+    roleNotGuestMiddleware,
 };

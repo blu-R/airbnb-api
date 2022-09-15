@@ -1,5 +1,11 @@
 const { port } = require("../config");
 const userControllers = require("./users.controllers");
+const {
+    getAllAccommodationsByUser,
+    editAccommodation,
+    getAccommodationById,
+    deleteAccommodation,
+} = require("../accommodations/accommodations.controllers");
 
 const getAll = (req, res) => {
     userControllers
@@ -37,9 +43,10 @@ const register = (req, res) => {
     } else if (
         !data.firstName ||
         !data.lastName ||
+        !data.gender ||
         !data.email ||
-        !data.phone ||
         !data.password ||
+        !data.phone ||
         !data.birthdayDate
     ) {
         return res.status(400).json({
@@ -48,10 +55,10 @@ const register = (req, res) => {
                 firstName: "string",
                 lastName: "string",
                 email: "example@example.com",
+                gender: "sting",
                 phone: "string",
                 password: "string",
                 birthdayDate: "YYYY-MM-DD",
-                country: "string",
             },
         });
     } else {
@@ -63,7 +70,7 @@ const register = (req, res) => {
                     user: response,
                 });
             })
-            .catch(err => res.status(400).json({ err }));
+            .catch(err => res.status(400).json({ message: "error", err }));
     }
 };
 
@@ -73,27 +80,6 @@ const edit = (req, res) => {
 
     if (!Object.keys(user).length) {
         return res.status(400).json({ message: "Missing data" });
-    } else if (
-        !user.firstName ||
-        !user.lastName ||
-        !user.email ||
-        !user.role ||
-        !user.birthdayDate ||
-        !user.country ||
-        !user.status
-    ) {
-        return res.status(400).json({
-            message: "All fields must be completed",
-            fields: {
-                firstName: "string",
-                lastName: "string",
-                email: "example@example.com",
-                role: "normal",
-                birthdayDate: "YYYY-MM-DD",
-                country: "string",
-                status: "string",
-            },
-        });
     } else {
         userControllers
             .editUser(id, user, req.user.role)
@@ -101,7 +87,7 @@ const edit = (req, res) => {
                 if (!response[0]) {
                     return res
                         .status(404)
-                        .json({ message: "Invalid ID. User not found" });
+                        .json({ message: "Invalid ID. User not found" }); //! also if no field was updated
                 }
                 return res.status(200).json({
                     message: `User data edited succesfully`,
@@ -131,7 +117,7 @@ const remove = (req, res) => {
             }
         })
         .catch(err => {
-            return res.status(400).json({ message: "Invalid ID", err });
+            return res.status(400).json({ message: "error", err });
         });
 };
 
@@ -154,27 +140,6 @@ const editMyUser = (req, res) => {
 
     if (!Object.keys(user).length) {
         return res.status(400).json({ message: "Missing data" });
-    } else if (
-        !user.firstName ||
-        !user.lastName ||
-        !user.email ||
-        !user.phone ||
-        !user.birthdayDate ||
-        !user.country ||
-        !user.status
-    ) {
-        return res.status(400).json({
-            message: "All fields must be completed",
-            fields: {
-                firstName: "string",
-                lastName: "string",
-                email: "example@example.com",
-                phone: "+51646461616",
-                birthdayDate: "YYYY-MM-DD",
-                country: "string",
-                status: "string",
-            },
-        });
     } else {
         userControllers
             .editUser(id, user, req.user.role)
@@ -182,7 +147,7 @@ const editMyUser = (req, res) => {
                 if (!response[0]) {
                     return res
                         .status(404)
-                        .json({ message: "Invalid ID. User not found" });
+                        .json({ message: "Invalid ID. User not found" }); //! also if no field was updated
                 }
                 return res.status(200).json({
                     message: `User data edited succesfully`,
@@ -225,7 +190,7 @@ const postProfileImg = (req, res) => {
         .editProfileImg(id, imgPath)
         .then(response => {
             if (response) {
-                return res.status(200).json(response);
+                return res.status(201).json(response);
             }
             return res
                 .status(404)
@@ -249,6 +214,59 @@ const getUserRole = (req, res) => {
         .catch(err => res.status(400).json({ message: "Error", err }));
 };
 
+const getMyAccommodations = (req, res) => {
+    const id = req.user.id;
+    getAllAccommodationsByUser(id)
+        .then(response => {
+            if (!response) {
+                return res
+                    .status(404)
+                    .json({ message: "Invalid ID. User doesn't exist" });
+            }
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(400).json(err);
+        });
+};
+
+const editMyAccomodation = (req, res) => {
+    const userId = req.user.id;
+    const data = req.body;
+    const accomodationId = req.params.id;
+
+    getAccommodationById(accomodationId)
+        .then(response => {
+            if (userId === response.user.id) {
+                editAccommodation(accomodationId, data)
+                    .then(edited => {
+                        return res.status(200).json(edited);
+                    })
+                    .catch(err =>
+                        res.status(400).json({ message: err.message })
+                    );
+            }
+            return res.status(403).json({ message: "Forbidden" });
+        })
+        .catch(err => res.status(400).json({ message: err.message }));
+};
+
+const removeMyAccommodation = (req, res) => {
+    const accomodationId = req.params.id;
+    const userId = req.user.id;
+
+    deleteAccommodation(accomodationId, userId, null)
+        .then(response => {
+            if (!response) {
+                return res.status(404).json({ message: "Not found" });
+            }
+            return res.status(204).json();
+        })
+        .catch(err => {
+            return res.status(400).json({ message: "error", err });
+        });
+};
+
 module.exports = {
     getAll,
     getById,
@@ -260,4 +278,7 @@ module.exports = {
     removeMyUser,
     postProfileImg,
     getUserRole,
+    getMyAccommodations,
+    editMyAccomodation,
+    removeMyAccommodation,
 };

@@ -2,9 +2,60 @@
     "openapi": "3.0.1",
     "info": {
         "title": "API Rest Clon de Airbnb",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "contact": {
+            "email": "blu.r@outlook.com"
+        }
     },
     "paths": {
+        "/api/v1/auth/register": {
+            "post": {
+                "summary": "Crear un usuario",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información del usuario",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": " ",
+                "tags": ["Auth"],
+                "responses": {
+                    "200": {
+                        "description": "Creamos exitosamente un usuario"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que los datos de usario estén incompletos o cuando la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/login": {
+            "post": {
+                "summary": "Iniciar sesión",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con credenciales del usuario",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": " ",
+                "tags": ["Auth"],
+                "responses": {
+                    "200": {
+                        "description": "Iniciamos sesión de usuario exitosamente"
+                    },
+                    "401": {
+                        "description": "Generamos un error en caso de que los datos de usario estén incorrectos"
+                    }
+                }
+            }
+        },
         "/api/v1/users": {
             "get": {
                 "summary": "Obtener todos los usuarios",
@@ -140,7 +191,7 @@
         },
         "/api/v1/users/me": {
             "get": {
-                "summary": "Obtener usuario loggeado",
+                "summary": "Obtener mi usuario",
                 "parameters": [
                     {
                         "name": "id",
@@ -162,7 +213,7 @@
                 }
             },
             "put": {
-                "summary": "Editar usuario loggeado",
+                "summary": "Editar mi usuario",
                 "parameters": [
                     {
                         "name": "id",
@@ -201,7 +252,7 @@
                 }
             },
             "delete": {
-                "summary": "Eliminar un usuario",
+                "summary": "Eliminar mi usuario",
                 "parameters": [
                     {
                         "name": "id",
@@ -226,9 +277,102 @@
                 }
             }
         },
+        "/api/v1/users/me/accommodations": {
+            "get": {
+                "summary": "Obtener todos mis alojamientos",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario  'host' ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente los alojamientos"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            }
+        },
+        "/api/v1/users/me/accomodations/:id": {
+            "put": {
+                "summary": "Editar mi alojamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información actualizada del alojamiento",
+                        "required": true,
+                        "type": "object"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del alojamiento del usuario loggeado",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'host' ",
+                "tags": ["Users"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitosamente el alojamiento"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "403": {
+                        "description": "Generamos un error en caso no pertenezca el ID al usuario loggeado"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Eliminar mi alojamiento ",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'host' ",
+                "tags": ["Users"],
+                "responses": {
+                    "204": {
+                        "description": " Elimina exitosamente su alojamiento"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el ID"
+                    }
+                }
+            }
+        },
         "/api/v1/users/me/profile-img": {
             "post": {
-                "summary": "Subir imágen de perfil",
+                "summary": "Subir mi imágen de perfil",
                 "parameters": [
                     {
                         "name": "id",
@@ -248,7 +392,7 @@
                 "description": "Solo puede realizarlo un usuario loggeado",
                 "tags": ["Users"],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Actualizamos exitósamente la imágen de perfil del usuario"
                     },
                     "400": {
@@ -256,6 +400,246 @@
                     },
                     "404": {
                         "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            }
+        },
+        "/api/v1/accommodations": {
+            "get": {
+                "summary": "Obtener todos los alojamientos",
+                "description": " ",
+                "tags": ["Accommodations"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente todos los alojamientos"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Crear un alojamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información del alojamiento",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'host'",
+                "tags": ["Accommodations"],
+                "responses": {
+                    "201": {
+                        "description": "Creamos exitosamente un alojamiento"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/accommodations/{id}": {
+            "get": {
+                "summary": "Obtener un alojamiento por su ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del alojamiento",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": " ",
+                "tags": ["Accommodations"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente el alojamiento"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso no exista el alojamiento con el ID dado"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Editar Alojamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información actualizada del alojamiento",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin'",
+                "tags": ["Accommodations"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitosamente el alojamiento"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el usuario con el ID"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Eliminar un alojamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del alojamiento",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin' ",
+                "tags": ["Accommodations"],
+                "responses": {
+                    "204": {
+                        "description": " Elimina exitosamente un alojamiento"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista el alojamiento con el ID dado"
+                    }
+                }
+            }
+        },
+        "/api/v1/reservations": {
+            "get": {
+                "summary": "Obtener todas las reservaciones",
+                "description": " ",
+                "tags": ["Reservations"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente todas las reservaciones"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    }
+                }
+            }
+        },
+        "/api/v1/reservations/:id": {
+            "get": {
+                "summary": "Obtener una reservación por su ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la reservación",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin' ",
+                "tags": ["Reservations"],
+                "responses": {
+                    "200": {
+                        "description": "Obtenemos exitosamente la reservación"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista la reservación con el ID dado"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Editar la reservación",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la reservación",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información actualizada de la reservación",
+                        "required": true,
+                        "type": "object"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario 'admin'",
+                "tags": ["Reservations"],
+                "responses": {
+                    "200": {
+                        "description": "Actualizamos exitosamente la reservación"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
+                    },
+                    "404": {
+                        "description": "Generamos un error en caso no exista la reservación con el ID dado"
+                    }
+                }
+            }
+        },
+        "/api/v1/accommodations/:id/make-reservation": {
+            "post": {
+                "summary": "Crear una reservación",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "jwt",
+                        "description": "ID del usuario",
+                        "required": true,
+                        "type": "UUID"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Objeto con información de la reservación",
+                        "required": true,
+                        "type": "object"
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del alojamiento",
+                        "required": true,
+                        "type": "UUID"
+                    }
+                ],
+                "description": "Solo puede realizarlo un usuario loggeado",
+                "tags": ["Reservations"],
+                "responses": {
+                    "201": {
+                        "description": "Creamos exitosamente la reservación"
+                    },
+                    "400": {
+                        "description": "Generamos un error en caso de que la petición no se resuelva"
                     }
                 }
             }

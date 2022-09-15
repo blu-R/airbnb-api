@@ -14,6 +14,7 @@ const userRouter = require("./users/users.routes").router;
 const authRouter = require("./auth/auth.routes").router;
 const accommodationRouter =
     require("./accommodations/accomodations.routes").router;
+const reservationRouter = require("./reservations/reservations.routes").router;
 
 const initModels = require("./models/initModels");
 const defaultData = require("./utils/defaultData");
@@ -53,6 +54,7 @@ app.use(express.json()); //? Esta configuración es para habilitar el req.body
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/accommodations", accommodationRouter);
+app.use("/api/v1/reservations", reservationRouter);
 app.use("/v1/doc", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 app.use("/api/v1/uploads/:imgName", (req, res) => {

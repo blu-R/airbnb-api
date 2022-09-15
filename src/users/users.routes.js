@@ -1,7 +1,10 @@
 const router = require("express").Router();
 
 const passport = require("passport");
-const { roleAdminMiddleware } = require("../middleware/role.middleware");
+const {
+    roleAdminMiddleware,
+    roleHostMiddleware,
+} = require("../middleware/role.middleware");
 const { upload } = require("../utils/multer");
 require("../middleware/auth.middleware")(passport);
 
@@ -27,12 +30,33 @@ router
     );
 
 router
+    .route("/me/accommodations")
+    .get(
+        passport.authenticate("jwt", { session: false }),
+        roleHostMiddleware,
+        userServices.getMyAccommodations
+    );
+
+router
+    .route("/me/accommodations/:id")
+    .put(
+        passport.authenticate("jwt", { session: false }),
+        roleHostMiddleware,
+        userServices.editMyAccomodation
+    )
+    .delete(
+        passport.authenticate("jwt", { session: false }),
+        roleHostMiddleware,
+        userServices.removeMyAccommodation
+    );
+
+router
     .route("/me/profile-img")
     .post(
         passport.authenticate("jwt", { session: false }),
         upload.single("profile_img"),
         userServices.postProfileImg
-    ); //? get()
+    );
 
 router
     .route("/:id")

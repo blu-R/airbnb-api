@@ -86,7 +86,7 @@ const generateData = async () => {
     await Accommodation.create({
         id: "7e5fc196-8f45-46d2-bb2b-2f8b95340d50",
         title: "premium - vistas 360 ciudad (piscina y gym)",
-        description: "asd",
+        description: "Lorem ipsum",
         guests: 6,
         rooms: 3,
         beds: 3,

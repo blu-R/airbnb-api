@@ -17,8 +17,14 @@ const initModels = () => {
     User_image.belongsTo(User);
 
     //? Users <-> Accommodations
-    User.belongsToMany(Accommodation, { through: Reservation });
-    Accommodation.belongsToMany(User, { through: Reservation });
+    /* User.belongsToMany(Accommodation, { through: Reservation });
+    Accommodation.belongsToMany(User, { through: Reservation }); */
+
+    User.hasMany(Reservation);
+    Reservation.belongsTo(User);
+
+    Accommodation.hasMany(Reservation);
+    Reservation.belongsTo(Accommodation);
 
     //? Accommodations ->  Accommodation_images
     Accommodation.hasMany(AccommodationImage);

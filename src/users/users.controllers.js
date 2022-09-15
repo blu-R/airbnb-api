@@ -50,7 +50,14 @@ const createUser = async data => {
 };
 
 const editUser = async (userId, data, userRoleId) => {
-    const { id, password, verified, roleID, ...restOfProperties } = data;
+    const {
+        id,
+        password,
+        verified,
+        roleID,
+        profileImage,
+        ...restOfProperties
+    } = data;
     if (userRoleId === "e3ec98b6-d116-44e6-9e19-a4c5300b0675") {
         const response = await Users.update(
             {
