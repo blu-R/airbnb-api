@@ -62,17 +62,6 @@ app.use("/api/v1/uploads/:imgName", (req, res) => {
     res.status(200).sendFile(path.resolve("uploads/") + "/" + imgName);
 });
 
-app.get(
-    "/ejemplo",
-    passport.authenticate("jwt", { session: false }),
-    (req, res) => {
-        res.status(200).json({
-            message: "credenciales",
-            email: req.user.email,
-        });
-    }
-);
-
 app.listen(port, () => {
     console.log(`Server "Kame House" started at port ${port}`);
 });
